@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="80mm"
+   height="80mm"
+   viewBox="0 0 80 80"
+   version="1.1"
+   id="svg5"
+   inkscape:export-filename="/home/rafael/workspace/game/aekisfour/ship.png"
+   inkscape:export-xdpi="5.2383471"
+   inkscape:export-ydpi="5.2383471"
+   inkscape:version="1.1 (c4e8f9ed74, 2021-05-24)"
+   sodipodi:docname="ship.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#000000"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:document-units="mm"
+     showgrid="false"
+     width="80mm"
+     inkscape:zoom="1.4135559"
+     inkscape:cx="46.690761"
+     inkscape:cy="150.3301"
+     inkscape:window-width="1910"
+     inkscape:window-height="1049"
+     inkscape:window-x="0"
+     inkscape:window-y="26"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-54.803398,-87.390378)">
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:4.77684;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 129.51761,128.66655 59.837547,93.349547 62.724596,163.12009 Z"
+       id="path873"
+       inkscape:export-filename="/home/rafael/workspace/game/aekisfour/ship.png"
+       inkscape:export-xdpi="2.7367003"
+       inkscape:export-ydpi="2.7367003" />
+  </g>
+</svg>

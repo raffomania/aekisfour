@@ -12,7 +12,7 @@ func _ready():
 func _process(dt):
 	for i in range(self.multimesh.instance_count):
 		var ship = ships[i]
-		ship.transform = ship.transform.translated(Vector2(dt * 10, 0))
+		ship.update(dt)
 		multimesh.set_instance_transform_2d(i, ship.transform)
 
 func add_ship():
@@ -25,4 +25,7 @@ class Ship:
 	var transform
 
 	func init():
-		transform = Transform2D()
+		transform = Transform2D().translated(Vector2(500, 500))
+
+	func update(dt):
+		transform = transform.translated(Vector2(dt * 10, 0))

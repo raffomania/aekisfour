@@ -16,7 +16,7 @@ func _ready():
 	add_to_group('planets')
 
 func _draw():
-	draw_circle(Vector2.ZERO, radius, Color.tan)
+	draw_circle(Vector2.ZERO, radius, Color.teal)
 
 	if selected:
 		var offset = radius + 10 

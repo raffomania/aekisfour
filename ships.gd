@@ -35,7 +35,7 @@ class Ship:
 	var target: Planet
 	var velocity: Vector2 = Vector2.ZERO
 	var resources = 0
-	const capacity = 3
+	const capacity = 2
 
 	func init(position):
 		transform = Transform2D().translated(position)

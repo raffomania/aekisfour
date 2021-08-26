@@ -64,16 +64,10 @@ func set_building(type):
 
 	if type == building_type.RESOURCE:
 		var resource_timer = Timer.new()
-		resource_timer.wait_time = 5
+		resource_timer.wait_time = 2
 		resource_timer.connect('timeout', self, 'tick_resources')
 		add_child(resource_timer)
 		resource_timer.start()
-	if type == building_type.SHIPYARD:
-		var build_timer = Timer.new()
-		build_timer.wait_time = 1
-		build_timer.connect('timeout', self, 'try_spawn_ship')
-		add_child(build_timer)
-		build_timer.start()
 
 func set_show_label(value):
 	show_label = value
@@ -86,3 +80,5 @@ func set_selected(value):
 func set_resources(value):
 	resources = value
 	update()
+	if building == building_type.SHIPYARD:
+		try_spawn_ship()

@@ -18,9 +18,9 @@ glow_blend_mode = 0
 size = Vector2( 12, 12 )
 
 [sub_resource type="MultiMesh" id=3]
-instance_count = 2
+instance_count = 10
 mesh = SubResource( 2 )
-transform_2d_array = PoolVector2Array( 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0 )
+transform_2d_array = PoolVector2Array( 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0 )
 
 [node name="main" type="Node"]
 

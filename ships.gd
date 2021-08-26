@@ -32,32 +32,47 @@ func add_ship(position):
 
 class Ship:
 	var transform: Transform2D
+	var last_target: Vector2
 	var target: Planet
-	var velocity: Vector2 = Vector2.ZERO
+	var velocity: Vector2 = Vector2(randf() - 0.5, randf() - 0.5)
 	var resources = 0
 	const capacity = 2
+	const max_speed = 50
+	const steering = 0.03
+	const separation = 0.03
+	const max_distance_from_home = pow(500, 2)
+	const random_wander_strength = 0.9
 
-	func init(position):
+	func init(position: Vector2):
 		transform = Transform2D().translated(position)
+		last_target = position
 
 	func update(dt, ships):
+		var direction: Vector2 = velocity.normalized()
 		if is_instance_valid(target):
-			var direction = target.global_position - transform.origin
-			if direction.length_squared() < 500:
+			var to_target = target.global_position - transform.origin
+			if to_target.length_squared() < 1000:
 				process_target()
 			else:
-				velocity = velocity.linear_interpolate(direction.normalized(), 0.008)
+				direction = to_target.normalized()
+		else:
+			var random_direction = direction.slerp(direction.rotated((randf() - 0.5) * PI), random_wander_strength)
+			var back_home = last_target - transform.origin
+			var distance_from_home_factor = 1 - 1 / pow(2, (back_home.length_squared() - max_distance_from_home) * 0.00001)
+			direction = random_direction.slerp(back_home.normalized(), clamp(distance_from_home_factor, 0, 1))
 		
 		for ship in ships:
 			if ship == self:
 				continue
 
-			var direction_to_other = self.transform.origin - ship.transform.origin
-			if direction_to_other.length_squared() < 1500:
-				velocity = velocity.linear_interpolate(direction_to_other.normalized(), 0.002)
+			var from_other_to_self = self.transform.origin - ship.transform.origin
+			if from_other_to_self.length_squared() < 1500:
+				direction = direction.slerp(from_other_to_self.normalized(), separation)
+
+		velocity = velocity.linear_interpolate(direction * max_speed, steering)
 
 		var new_transform = Transform2D().rotated(velocity.angle())
-		new_transform.origin = transform.origin + dt * velocity * 100
+		new_transform.origin = transform.origin + dt * velocity
 		transform = new_transform
 
 	func process_target():
@@ -68,6 +83,7 @@ class Ship:
 		elif target.building == target.building_type.SHIPYARD and resources > 0:
 			target.resources += resources
 			resources = 0
+		last_target = target.global_position
 		target = null
 
 	func update_target(planets):

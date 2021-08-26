@@ -35,7 +35,7 @@ func _draw():
 		var _next = draw_char(font, pos, ']', '')
 
 	if building == building_type.RESOURCE:
-		draw_circle(Vector2(0, 0), radius - 10, Color.white)
+		draw_circle(Vector2(0, 0), radius - 15, Color.white)
 
 	for i in range(resources):
 		var position = Vector2(radius + 5, 0).rotated(i * TAU / 20)
@@ -53,6 +53,7 @@ func try_spawn_ship():
 	if resources >= 5:
 		$'../ships'.add_ship(self.global_position)
 		resources -= 5
+		update()
 
 func set_building(type):
 	if building != building_type.NONE:

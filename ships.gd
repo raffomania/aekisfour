@@ -37,12 +37,14 @@ class Ship:
 	var random_direction: Vector2 = Vector2(1, 0).rotated(randf() * TAU)
 	var velocity: Vector2 = Vector2(randf() - 0.5, randf() - 0.5)
 	var resources = 0
+	var reserved_resources = 0
 	const capacity = 2
-	const max_speed = 50
+	const max_speed = 80
 	const steering = 0.01
+	const acceleration = 0.005
 	const separation = 0.03
-	const max_distance_from_home = pow(500, 2)
-	const random_wander_strength = 0.5
+	const max_distance_from_home = 300
+	const random_wander_strength = 1
 
 	func init(position: Vector2):
 		transform = Transform2D().translated(position)
@@ -52,17 +54,19 @@ class Ship:
 		var direction: Vector2 = velocity.normalized()
 		if is_instance_valid(target):
 			var to_target = target.global_position - transform.origin
-			if to_target.length_squared() < 1000:
+			if to_target.length_squared() < 2000:
 				process_target()
 			else:
 				direction = to_target.normalized()
 		else:
-			random_direction = random_direction.rotated((randf() - 0.5) * TAU * dt * 5)
-			direction = direction.slerp(random_direction, random_wander_strength)
+			random_direction = random_direction.rotated((randf() - 0.5) * TAU * dt * random_wander_strength)
 
 			var back_home = last_target - transform.origin
-			var distance_from_home_factor = 1 - 1 / pow(2, (back_home.length_squared() - max_distance_from_home) * 0.00001)
-			direction = direction.slerp(back_home.normalized(), clamp(distance_from_home_factor, 0, 1))
+			var too_far_distance = back_home.length() - max_distance_from_home
+			var distance_from_home_factor = max(0, too_far_distance * 0.001)
+			random_direction = random_direction.slerp(back_home.normalized(), clamp(distance_from_home_factor, 0, 1))
+
+			direction = random_direction
 		
 		for ship in ships:
 			if ship == self:
@@ -72,7 +76,7 @@ class Ship:
 			if from_other_to_self.length_squared() < 1500:
 				direction = direction.slerp(from_other_to_self.normalized(), separation)
 
-		velocity = velocity.linear_interpolate(direction * max_speed, steering)
+		velocity = velocity.normalized().slerp(direction, steering) * lerp(velocity.length(), max_speed, acceleration)
 
 		var new_transform = Transform2D().rotated(velocity.angle())
 		new_transform.origin = transform.origin + dt * velocity
@@ -82,8 +86,7 @@ class Ship:
 		if target.building == target.building_type.RESOURCE and target.resources > 0 and resources < capacity:
 			var amount = min(capacity - resources, target.resources)
 			target.resources -= amount
-			# todo this is often not the amount that was actually reserved
-			target.reserved_resources -= amount
+			target.reserved_resources -= reserved_resources
 			resources += amount
 		elif target.building == target.building_type.SHIPYARD and resources > 0:
 			target.resources += resources
@@ -99,4 +102,5 @@ class Ship:
 			elif planet.building == planet.building_type.RESOURCE and resources == 0 and planet.reserved_resources < planet.resources:
 				target = planet
 				planet.reserved_resources += capacity - resources
+				reserved_resources += capacity - resources
 				return

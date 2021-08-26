@@ -8,6 +8,16 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "Node2D",
+"class": "Planet",
+"language": "GDScript",
+"path": "res://planet.gd"
+} ]
+_global_script_class_icons={
+"Planet": ""
+}
+
 [application]
 
 config/name="Aekisfour"

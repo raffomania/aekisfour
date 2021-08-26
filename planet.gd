@@ -1,10 +1,12 @@
 extends Node2D
 
+class_name Planet
+
 enum building_type {RESOURCE, SHIPYARD, NONE}
 
-var resources = 0
-var selected = false
-var show_label = false
+var resources = 0 setget set_resources
+var selected = false setget set_selected
+var show_label = false setget set_show_label
 var character
 var building = building_type.NONE
 
@@ -43,21 +45,43 @@ func _draw():
 		draw_texture(ship_texture, Vector2(-5, -5))
 
 
-func _process(_delta):
-	update()
-
 func tick_resources():
 	resources += 1
 	update()
+
+func try_spawn_ship():
+	if resources >= 5:
+		$'../ships'.add_ship(self.global_position)
+		resources -= 5
 
 func set_building(type):
 	if building != building_type.NONE:
 		return
 
 	building = type
+	update()
+
 	if type == building_type.RESOURCE:
 		var resource_timer = Timer.new()
 		resource_timer.wait_time = 5
 		resource_timer.connect('timeout', self, 'tick_resources')
 		add_child(resource_timer)
 		resource_timer.start()
+	if type == building_type.SHIPYARD:
+		var build_timer = Timer.new()
+		build_timer.wait_time = 1
+		build_timer.connect('timeout', self, 'try_spawn_ship')
+		add_child(build_timer)
+		build_timer.start()
+
+func set_show_label(value):
+	show_label = value
+	update()
+
+func set_selected(value):
+	selected = value
+	update()
+
+func set_resources(value):
+	resources = value
+	update()

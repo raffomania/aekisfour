@@ -27,6 +27,7 @@ func add_ship(position):
 class Ship:
 	var transform: Transform2D
 	var target: Planet
+	var velocity: Vector2 = Vector2.ZERO
 	var resources = 0
 
 	func init(position):
@@ -35,12 +36,16 @@ class Ship:
 	func update(dt):
 		if is_instance_valid(target):
 			var direction = target.global_position - transform.origin
-			if direction.length_squared() < 50:
+			if direction.length_squared() < 100:
 				process_target()
 			else:
-				transform = Transform2D().rotated(direction.angle())\
-					.translated((transform.origin + dt * 100 * direction.normalized()).rotated(-direction.angle()))
-		
+				velocity = velocity.linear_interpolate(direction.normalized(), 0.01)
+
+
+		var new_transform = Transform2D().rotated(velocity.angle())
+		new_transform.origin = transform.origin + dt * velocity * 100
+		transform = new_transform
+
 	func process_target():
 		if target.building == target.building_type.RESOURCE and target.resources > 0 and resources == 0:
 			target.resources -= 1

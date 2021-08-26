@@ -34,14 +34,15 @@ class Ship:
 	var transform: Transform2D
 	var last_target: Vector2
 	var target: Planet
+	var random_direction: Vector2 = Vector2(1, 0).rotated(randf() * TAU)
 	var velocity: Vector2 = Vector2(randf() - 0.5, randf() - 0.5)
 	var resources = 0
 	const capacity = 2
 	const max_speed = 50
-	const steering = 0.03
+	const steering = 0.01
 	const separation = 0.03
 	const max_distance_from_home = pow(500, 2)
-	const random_wander_strength = 0.9
+	const random_wander_strength = 0.5
 
 	func init(position: Vector2):
 		transform = Transform2D().translated(position)
@@ -56,10 +57,12 @@ class Ship:
 			else:
 				direction = to_target.normalized()
 		else:
-			var random_direction = direction.slerp(direction.rotated((randf() - 0.5) * PI), random_wander_strength)
+			random_direction = random_direction.rotated((randf() - 0.5) * TAU * dt * 5)
+			direction = direction.slerp(random_direction, random_wander_strength)
+
 			var back_home = last_target - transform.origin
 			var distance_from_home_factor = 1 - 1 / pow(2, (back_home.length_squared() - max_distance_from_home) * 0.00001)
-			direction = random_direction.slerp(back_home.normalized(), clamp(distance_from_home_factor, 0, 1))
+			direction = direction.slerp(back_home.normalized(), clamp(distance_from_home_factor, 0, 1))
 		
 		for ship in ships:
 			if ship == self:
@@ -77,8 +80,10 @@ class Ship:
 
 	func process_target():
 		if target.building == target.building_type.RESOURCE and target.resources > 0 and resources < capacity:
-			var amount = min(capacity, target.resources)
+			var amount = min(capacity - resources, target.resources)
 			target.resources -= amount
+			# todo this is often not the amount that was actually reserved
+			target.reserved_resources -= amount
 			resources += amount
 		elif target.building == target.building_type.SHIPYARD and resources > 0:
 			target.resources += resources
@@ -91,6 +96,7 @@ class Ship:
 			if planet.building == planet.building_type.SHIPYARD and resources > 0:
 				target = planet
 				return
-			elif planet.building == planet.building_type.RESOURCE and resources == 0:
+			elif planet.building == planet.building_type.RESOURCE and resources == 0 and planet.reserved_resources < planet.resources:
 				target = planet
+				planet.reserved_resources += capacity - resources
 				return

@@ -5,6 +5,7 @@ class_name Planet
 enum building_type {RESOURCE, SHIPYARD, NONE}
 
 var resources = 0 setget set_resources
+var reserved_resources = 0
 var selected = false setget set_selected
 var show_label = false setget set_show_label
 var character
@@ -64,7 +65,7 @@ func set_building(type):
 
 	if type == building_type.RESOURCE:
 		var resource_timer = Timer.new()
-		resource_timer.wait_time = 2
+		resource_timer.wait_time = 5
 		resource_timer.connect('timeout', self, 'tick_resources')
 		add_child(resource_timer)
 		resource_timer.start()

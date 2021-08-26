@@ -17,6 +17,12 @@ func _process(dt):
 			ship.update_target(planets)
 		ship.update(dt)
 		multimesh.set_instance_transform_2d(i, ship.transform)
+	update()
+
+func _draw():
+	for ship in ships:
+		for i in range(ship.resources):
+			draw_circle(ship.transform.translated(Vector2(-10 + i * -5, 0)).origin, 2, Color.white)
 
 func add_ship(position):
 	multimesh.instance_count += 1
@@ -29,6 +35,7 @@ class Ship:
 	var target: Planet
 	var velocity: Vector2 = Vector2.ZERO
 	var resources = 0
+	const capacity = 3
 
 	func init(position):
 		transform = Transform2D().translated(position)
@@ -41,18 +48,18 @@ class Ship:
 			else:
 				velocity = velocity.linear_interpolate(direction.normalized(), 0.01)
 
-
 		var new_transform = Transform2D().rotated(velocity.angle())
 		new_transform.origin = transform.origin + dt * velocity * 100
 		transform = new_transform
 
 	func process_target():
-		if target.building == target.building_type.RESOURCE and target.resources > 0 and resources == 0:
-			target.resources -= 1
-			resources += 1
+		if target.building == target.building_type.RESOURCE and target.resources > 0 and resources < capacity:
+			var amount = min(capacity, target.resources)
+			target.resources -= amount
+			resources += amount
 		elif target.building == target.building_type.SHIPYARD and resources > 0:
-			resources -= 1
-			target.resources += 1
+			target.resources += resources
+			resources = 0
 		target = null
 
 	func update_target(planets):

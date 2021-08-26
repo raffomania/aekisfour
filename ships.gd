@@ -5,7 +5,7 @@ var ships: Array = []
 func _ready():
 	for i in range(self.multimesh.instance_count):
 		var ship = Ship.new()
-		ship.init(Vector2(1920/2, 1080/2))
+		ship.init(Vector2(1920/2 + randf() * 10, 1080/2 + randf() * 10))
 		ships.push_back(ship)
 		multimesh.set_instance_transform_2d(i, ships[i].transform)
 
@@ -15,7 +15,7 @@ func _process(dt):
 		var ship = ships[i]
 		if not is_instance_valid(ship.target):
 			ship.update_target(planets)
-		ship.update(dt)
+		ship.update(dt, ships)
 		multimesh.set_instance_transform_2d(i, ship.transform)
 	update()
 
@@ -40,13 +40,21 @@ class Ship:
 	func init(position):
 		transform = Transform2D().translated(position)
 
-	func update(dt):
+	func update(dt, ships):
 		if is_instance_valid(target):
 			var direction = target.global_position - transform.origin
-			if direction.length_squared() < 100:
+			if direction.length_squared() < 500:
 				process_target()
 			else:
-				velocity = velocity.linear_interpolate(direction.normalized(), 0.01)
+				velocity = velocity.linear_interpolate(direction.normalized(), 0.008)
+		
+		for ship in ships:
+			if ship == self:
+				continue
+
+			var direction_to_other = self.transform.origin - ship.transform.origin
+			if direction_to_other.length_squared() < 1500:
+				velocity = velocity.linear_interpolate(direction_to_other.normalized(), 0.002)
 
 		var new_transform = Transform2D().rotated(velocity.angle())
 		new_transform.origin = transform.origin + dt * velocity * 100

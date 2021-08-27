@@ -39,12 +39,12 @@ class Ship:
 	var resources = 0
 	var reserved_resources = 0
 	const capacity = 2
-	const max_speed = 80
-	const steering = 0.01
-	const acceleration = 0.005
+	const max_speed = 100
+	const steering = 1.45
+	const acceleration = 0.145
 	const separation = 0.03
 	const max_distance_from_home = 300
-	const random_wander_strength = 1
+	const random_wander_strength = 2
 
 	func init(position: Vector2):
 		transform = Transform2D().translated(position)
@@ -52,12 +52,14 @@ class Ship:
 
 	func update(dt, ships):
 		var direction: Vector2 = velocity.normalized()
+		var deceleration = 0
 		if is_instance_valid(target):
 			var to_target = target.global_position - transform.origin
 			if to_target.length_squared() < 2000:
 				process_target()
 			else:
 				direction = to_target.normalized()
+				deceleration = clamp((400 - to_target.length())/400, 0, 1) * acceleration
 		else:
 			random_direction = random_direction.rotated((randf() - 0.5) * TAU * dt * random_wander_strength)
 
@@ -76,7 +78,9 @@ class Ship:
 			if from_other_to_self.length_squared() < 1500:
 				direction = direction.slerp(from_other_to_self.normalized(), separation)
 
-		velocity = velocity.normalized().slerp(direction, steering) * lerp(velocity.length(), max_speed, acceleration)
+		velocity = velocity.normalized().slerp(direction, steering * dt) \
+			* lerp(velocity.length(), max_speed, (acceleration - deceleration) * dt) \
+			* (1 - deceleration * dt)
 
 		var new_transform = Transform2D().rotated(velocity.angle())
 		new_transform.origin = transform.origin + dt * velocity

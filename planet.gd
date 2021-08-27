@@ -5,7 +5,7 @@ class_name Planet
 enum building_type {RESOURCE, SHIPYARD, NONE}
 
 var resources = 0 setget set_resources
-var reserved_resources = 0
+var reserved_resources = 0 setget set_reserved_resources
 var selected = false setget set_selected
 var show_label = false setget set_show_label
 var character
@@ -83,3 +83,7 @@ func set_resources(value):
 	update()
 	if building == building_type.SHIPYARD:
 		try_spawn_ship()
+
+func set_reserved_resources(value):
+	assert(value == 0 or building == building_type.RESOURCE)
+	reserved_resources = value

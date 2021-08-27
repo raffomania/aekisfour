@@ -1,18 +1,10 @@
 extends Control
 
-var planets
-var characters = [KEY_H, KEY_J, KEY_K, KEY_L]
-var by_char = {}
 var selected_planet
 var is_selecting
 onready var modeline = $modeline
 
 func _ready():
-	yield(get_tree().root, "ready")
-	planets = get_tree().get_nodes_in_group('planets')
-	for i in range(planets.size()):
-		by_char[characters[i]] = planets[i]
-		planets[i].character = characters[i]
 	modeline.text = '[G] go to planet'
 	remove_selection()
 
@@ -29,7 +21,11 @@ func _unhandled_input(event):
 		selected_planet.set_building(selected_planet.building_type.SHIPYARD)
 		modeline.text = '[G] go to planet%s' % line_for_planet(selected_planet)
 	elif event is InputEventKey and not event.pressed and is_selecting:
-		var planet = by_char.get(event.scancode)
+		var planets = get_tree().get_nodes_in_group('planets')
+		var planet
+		for other_planet in planets:
+			if other_planet.character == event.scancode:
+				planet = other_planet
 		if is_instance_valid(planet):
 			stop_selecting()
 			modeline.text = '[G] go to planet%s' % line_for_planet(planet)
@@ -46,11 +42,13 @@ func start_selecting():
 	modeline.text = ''
 	remove_selection()
 	is_selecting = true
+	var planets = get_tree().get_nodes_in_group('planets')
 	for planet in planets:
 		planet.show_label = true
 
 func stop_selecting():
 	is_selecting = false
+	var planets = get_tree().get_nodes_in_group('planets')
 	for planet in planets:
 		planet.show_label = false
 

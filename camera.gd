@@ -1,8 +1,14 @@
 extends Node2D
 
 func _ready():
-	yield(get_tree().root, "ready")
+	yield(get_tree().create_timer(0.1), 'timeout')
+	update()
+
+func update():
 	var planets = get_tree().get_nodes_in_group('planets')
+	if len(planets) == 0:
+		return
+
 	var extents = Rect2()
 	extents.position = planets[0].position
 	for planet in planets:

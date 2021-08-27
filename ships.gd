@@ -90,11 +90,12 @@ class Ship:
 		if target.building == target.building_type.RESOURCE and target.resources > 0 and resources < capacity:
 			var amount = min(capacity - resources, target.resources)
 			target.resources -= amount
-			target.reserved_resources -= reserved_resources
 			resources += amount
 		elif target.building == target.building_type.SHIPYARD and resources > 0:
 			target.resources += resources
 			resources = 0
+		target.reserved_resources -= reserved_resources
+		reserved_resources = 0
 		last_target = target.global_position
 		target = null
 
@@ -106,5 +107,5 @@ class Ship:
 			elif planet.building == planet.building_type.RESOURCE and resources == 0 and planet.reserved_resources < planet.resources:
 				target = planet
 				planet.reserved_resources += capacity - resources
-				reserved_resources += capacity - resources
+				reserved_resources = capacity - resources
 				return

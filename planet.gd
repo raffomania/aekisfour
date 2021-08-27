@@ -52,7 +52,7 @@ func tick_resources():
 
 func try_spawn_ship():
 	if resources >= 5:
-		$'../ships'.add_ship(self.global_position)
+		$'../../ships'.add_ship(self.global_position)
 		resources -= 5
 		update()
 

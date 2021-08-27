@@ -4,7 +4,7 @@
 [ext_resource path="res://ships.gd" type="Script" id=3]
 [ext_resource path="res://camera.gd" type="Script" id=4]
 [ext_resource path="res://ui.tscn" type="PackedScene" id=5]
-[ext_resource path="res://spawn.gd" type="Script" id=6]
+[ext_resource path="res://planets.gd" type="Script" id=6]
 
 [sub_resource type="Environment" id=1]
 background_mode = 4
@@ -27,6 +27,9 @@ transform_2d_array = PoolVector2Array( 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 1 )
 
+[node name="planets" type="Node" parent="."]
+script = ExtResource( 6 )
+
 [node name="ships" type="MultiMeshInstance2D" parent="."]
 multimesh = SubResource( 3 )
 texture = ExtResource( 2 )
@@ -39,6 +42,3 @@ script = ExtResource( 4 )
 
 [node name="ui" parent="CanvasLayer" instance=ExtResource( 5 )]
 margin_top = -14.0
-
-[node name="spawn" type="Node" parent="."]
-script = ExtResource( 6 )

@@ -3,6 +3,7 @@ extends Node
 var planet_res = preload('res://planet.tscn')
 var characters = [KEY_H, KEY_J, KEY_K, KEY_L]
 var planets = []
+signal planets_updated
 
 func _ready():
 	yield(get_tree().root, 'ready')
@@ -13,3 +14,4 @@ func _ready():
 		planet.global_position = Vector2(randf() * 2700, randf() * 1500)
 		add_child(planet)
 		planets.push_back(planet)
+	emit_signal('planets_updated')

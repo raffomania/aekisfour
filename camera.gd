@@ -16,6 +16,15 @@ func update():
 	extents.position -= extents.size * 0.2
 	extents.size += extents.size * 0.4
 
+	var smaller_than_min = Vector2(400, 400) - extents.size
+	if smaller_than_min.x > 0:
+		extents.size.x += smaller_than_min.x
+		extents.position.x -= smaller_than_min.x / 2
+
+	if smaller_than_min.y > 0:
+		extents.size.y += smaller_than_min.y
+		extents.position.y -= smaller_than_min.y / 2
+
 	var screen_size = Vector2(1920, 1080)
 	var scale = min(screen_size.x / extents.size.x, screen_size.y / extents.size.y)
 

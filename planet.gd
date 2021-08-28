@@ -14,9 +14,6 @@ const radius = 20
 const font = preload('res://mono.tres')
 const ship_texture = preload('res://ship.svg')
 
-func _ready():
-	add_to_group('planets')
-
 func _draw():
 	draw_circle(Vector2.ZERO, radius, Color.teal)
 

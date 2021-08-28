@@ -2,7 +2,7 @@ extends Node
 
 var planet_res = preload('res://planet.tscn')
 var characters = [KEY_H, KEY_J, KEY_K, KEY_L]
-var planets = []
+var all_planets = []
 signal planets_updated
 
 func _ready():
@@ -13,5 +13,6 @@ func _ready():
 		planet.character = character
 		planet.global_position = Vector2(randf() * 2700, randf() * 1500)
 		add_child(planet)
-		planets.push_back(planet)
+		all_planets.push_back(planet)
+	all_planets[0].add_to_group('planets')
 	emit_signal('planets_updated')

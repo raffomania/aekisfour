@@ -3,9 +3,11 @@ extends MultiMeshInstance2D
 var ships: Array = []
 
 func _ready():
+	yield($'../planets', 'planets_updated')
+	var planet = get_tree().get_nodes_in_group('planets')[0]
 	for i in range(self.multimesh.instance_count):
 		var ship = Ship.new()
-		ship.init(Vector2(1920/2 + randf() * 10, 1080/2 + randf() * 10))
+		ship.init(planet.global_position)
 		ships.push_back(ship)
 		multimesh.set_instance_transform_2d(i, ships[i].transform)
 

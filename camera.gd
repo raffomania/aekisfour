@@ -13,9 +13,22 @@ func update():
 	extents.position = planets[0].position
 	for planet in planets:
 		extents = extents.expand(planet.position)
-	var screen_size = Vector2(1920, 1080)
-	var offset = extents.position
-	offset -= screen_size / 2
-	offset += extents.size / 2
-	get_viewport().canvas_transform = Transform2D().translated(-offset)
+	
+	extents.position -= extents.size * 0.2
+	extents.size += extents.size * 0.4
 
+	var screen_size = Vector2(1920, 1080)
+	var scale = min(screen_size.x / extents.size.x, screen_size.y / extents.size.y)
+	print(scale)
+
+	var offset = extents.position
+	var margin = (screen_size - extents.size * scale) / 2
+	print(extents.size.y, ' ', extents.size.y * scale)
+	print(margin.y)
+	offset -= margin / scale
+
+	var transform = Transform2D()
+	transform.origin = -offset
+	transform = transform.scaled(Vector2(scale, scale))
+
+	get_viewport().canvas_transform = transform

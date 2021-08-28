@@ -13,9 +13,15 @@ _global_script_classes=[ {
 "class": "Planet",
 "language": "GDScript",
 "path": "res://planet.gd"
+}, {
+"base": "MultiMeshInstance2D",
+"class": "Ships",
+"language": "GDScript",
+"path": "res://ships.gd"
 } ]
 _global_script_class_icons={
-"Planet": ""
+"Planet": "",
+"Ships": ""
 }
 
 [application]

@@ -1,5 +1,7 @@
 extends MultiMeshInstance2D
 
+class_name Ships
+
 var ships: Array = []
 
 func _ready():
@@ -41,11 +43,10 @@ class Ship:
 	var resources = 0
 	var reserved_resources = 0
 	const capacity = 2
-	const max_speed = 100
+	const max_speed = 80
 	const steering = 1.45
-	const acceleration = 0.145
+	const acceleration = 0.1
 	const separation = 0.03
-	const max_distance_from_home = 300
 	const random_wander_strength = 2
 
 	func init(position: Vector2):
@@ -66,7 +67,7 @@ class Ship:
 			random_direction = random_direction.rotated((randf() - 0.5) * TAU * dt * random_wander_strength)
 
 			var back_home = last_target - transform.origin
-			var too_far_distance = back_home.length() - max_distance_from_home
+			var too_far_distance = back_home.length() - get_max_distance_from_home()
 			var distance_from_home_factor = max(0, too_far_distance * 0.001)
 			random_direction = random_direction.slerp(back_home.normalized(), clamp(distance_from_home_factor, 0, 1))
 
@@ -111,3 +112,6 @@ class Ship:
 				planet.reserved_resources += capacity - resources
 				reserved_resources = capacity - resources
 				return
+	
+	static func get_max_distance_from_home():
+		return 200

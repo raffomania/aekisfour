@@ -16,7 +16,7 @@ func update():
 	extents.position -= extents.size * 0.2
 	extents.size += extents.size * 0.4
 
-	var smaller_than_min = Vector2(400, 400) - extents.size
+	var smaller_than_min = Vector2(500, 500) - extents.size
 	if smaller_than_min.x > 0:
 		extents.size.x += smaller_than_min.x
 		extents.position.x -= smaller_than_min.x / 2

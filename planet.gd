@@ -7,7 +7,6 @@ enum building_type {RESOURCE, SHIPYARD, NONE}
 var resources = 0 setget set_resources
 var reserved_resources = 0 setget set_reserved_resources
 var selected = false setget set_selected
-var show_label = false setget set_show_label
 var character
 var building = building_type.NONE
 
@@ -27,13 +26,6 @@ func _draw():
 		draw_line(Vector2(offset, offset), Vector2(0, offset), Color.white)
 		draw_line(Vector2(-offset, -offset), Vector2(-offset, -offset / 2), Color.white)
 		draw_line(Vector2(-offset, -offset), Vector2(0, -offset), Color.white)
-
-	if show_label:
-		var pos = Vector2(-15, radius + 30)
-		var char_string = OS.get_scancode_string(character)
-		pos.x += draw_char(font, pos, '[', char_string) + 2
-		pos.x += draw_char(font, pos, char_string, ']') + 2
-		var _next = draw_char(font, pos, ']', '')
 
 	if building == building_type.RESOURCE:
 		draw_circle(Vector2(0, 0), radius - 15, Color.white)
@@ -69,10 +61,6 @@ func set_building(type):
 		resource_timer.connect('timeout', self, 'tick_resources')
 		add_child(resource_timer)
 		resource_timer.start()
-
-func set_show_label(value):
-	show_label = value
-	update()
 
 func set_selected(value):
 	selected = value

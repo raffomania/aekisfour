@@ -2,6 +2,7 @@ extends Control
 
 var selected_planet
 var is_selecting
+var planet_labels = []
 onready var modeline = $modeline
 
 func _ready():
@@ -44,13 +45,21 @@ func start_selecting():
 	is_selecting = true
 	var planets = get_tree().get_nodes_in_group('planets')
 	for planet in planets:
-		planet.show_label = true
+		var position = get_viewport().canvas_transform.xform(planet.global_position + Vector2(0, planet.radius * 1.2)) + Vector2(-10, 20)
+			
+		var label = Label.new()
+		label.text = '[%s]' % OS.get_scancode_string(planet.character)
+		label.margin_left = position.x
+		label.margin_top = position.y
+		add_child(label)
+		planet_labels.push_back(label)
 
 func stop_selecting():
 	is_selecting = false
-	var planets = get_tree().get_nodes_in_group('planets')
-	for planet in planets:
-		planet.show_label = false
+	for label in planet_labels:
+		remove_child(label)
+		label.queue_free()
+	planet_labels = []
 
 func remove_selection():
 	modeline.text = '[G] go to planet'

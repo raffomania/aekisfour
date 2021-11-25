@@ -12,6 +12,7 @@ func _ready():
 		ship.init(planet.global_position)
 		ships.push_back(ship)
 		multimesh.set_instance_transform_2d(i, ships[i].transform)
+		multimesh.set_instance_color(i, Color.white)
 
 func _process(dt):
 	var planets = get_tree().get_nodes_in_group('planets')
@@ -33,6 +34,8 @@ func add_ship(position):
 	var ship = Ship.new()
 	ship.init(position)
 	ships.push_back(ship)
+	multimesh.set_instance_transform_2d(multimesh.instance_count, ship.transform)
+	multimesh.set_instance_color(multimesh.instance_count, Color.white)
 
 class Ship:
 	var transform: Transform2D

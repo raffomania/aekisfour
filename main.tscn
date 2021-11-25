@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://ship.svg" type="Texture" id=2]
 [ext_resource path="res://ships.gd" type="Script" id=3]
@@ -14,13 +14,19 @@ glow_intensity = 1.0
 glow_bloom = 0.4
 glow_blend_mode = 0
 
-[sub_resource type="QuadMesh" id=2]
+[sub_resource type="SpatialMaterial" id=2]
+vertex_color_use_as_albedo = true
+
+[sub_resource type="QuadMesh" id=3]
+material = SubResource( 2 )
 size = Vector2( 12, 12 )
 
-[sub_resource type="MultiMesh" id=3]
+[sub_resource type="MultiMesh" id=4]
+color_format = 1
 instance_count = 5
-mesh = SubResource( 2 )
+mesh = SubResource( 3 )
 transform_2d_array = PoolVector2Array( 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0 )
+color_array = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 )
 
 [node name="main" type="Node"]
 
@@ -31,7 +37,7 @@ environment = SubResource( 1 )
 script = ExtResource( 6 )
 
 [node name="ships" type="MultiMeshInstance2D" parent="."]
-multimesh = SubResource( 3 )
+multimesh = SubResource( 4 )
 texture = ExtResource( 2 )
 script = ExtResource( 3 )
 

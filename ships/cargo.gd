@@ -30,12 +30,12 @@ func _draw():
 			draw_circle(ship.transform.translated(Vector2(-10 + i * -5, 0)).origin, 2, Color.white)
 
 func add_ship(position):
-	multimesh.instance_count += 1
 	var ship = CargoShip.new()
 	ship.init(position)
 	ships.push_back(ship)
-	multimesh.set_instance_transform_2d(multimesh.instance_count, ship.transform)
-	multimesh.set_instance_color(multimesh.instance_count, Color.white)
+	multimesh.instance_count += 1
+	multimesh.set_instance_transform_2d(multimesh.instance_count - 1, ship.transform)
+	multimesh.set_instance_color(multimesh.instance_count - 1, Color.white)
 
 class CargoShip:
 	var transform: Transform2D

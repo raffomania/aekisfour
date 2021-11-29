@@ -5,16 +5,15 @@ class_name EnemyShips
 
 var ships: Array = []
 var lasers: Array = []
+var enemies_to_spawn = 1
 
 func _ready():
 	yield($'../planets', 'planets_updated')
-	var planet = get_tree().get_nodes_in_group('planets')[0]
-	for i in range(self.multimesh.visible_instance_count):
-		var ship = EnemyShip.new()
-		ship.init(planet.global_position)
-		ships.push_back(ship)
-		multimesh.set_instance_transform_2d(i, ships[i].transform)
-		multimesh.set_instance_color(i, Color.red)
+	var timer = Timer.new()
+	timer.wait_time = 30
+	timer.connect('timeout', self, 'spawn_wave')
+	add_child(timer)
+	timer.start()
 
 func _process(dt):
 	var planets = get_tree().get_nodes_in_group('planets')
@@ -48,8 +47,13 @@ func add_ship(position):
 	var ship = EnemyShip.new()
 	ship.init(position)
 	ships.push_back(ship)
-	multimesh.set_instance_transform_2d(multimesh.instance_count, ship.transform)
-	multimesh.set_instance_color(multimesh.visible_instance_count, Color.white)
+	multimesh.set_instance_transform_2d(multimesh.visible_instance_count - 1, ship.transform)
+	multimesh.set_instance_color(multimesh.visible_instance_count - 1, Color.red)
+
+func spawn_wave():
+	for _i in range(enemies_to_spawn):
+		add_ship(Vector2(-1920/2, -1080/2))
+	enemies_to_spawn += 2
 
 class EnemyShip:
 	var transform: Transform2D

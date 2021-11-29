@@ -30,12 +30,12 @@ func _draw():
 			draw_line(ship.transform.origin, ship.laser, Color.red, 3.0)
 
 func add_ship(position):
-	multimesh.visible_instance_count += 1
 	var ship = DefenseShip.new()
 	ship.init(position)
 	ships.push_back(ship)
 	multimesh.set_instance_transform_2d(multimesh.visible_instance_count, ship.transform)
 	multimesh.set_instance_color(multimesh.visible_instance_count, Color.white)
+	multimesh.visible_instance_count += 1
 
 class DefenseShip:
 	var transform: Transform2D

@@ -21,6 +21,9 @@ func _unhandled_input(event):
 	elif event.is_action_pressed('s') and is_instance_valid(selected_planet):
 		selected_planet.set_building(selected_planet.building_type.SHIPYARD)
 		modeline.text = '[G] go to planet%s' % line_for_planet(selected_planet)
+	elif event.is_action_pressed('d') and is_instance_valid(selected_planet):
+		selected_planet.set_building(Planet.building_type.DEFENSE)
+		modeline.text = '[G] go to planet%s' % line_for_planet(selected_planet)
 	elif event is InputEventKey and not event.pressed and is_selecting:
 		var planets = get_tree().get_nodes_in_group('planets')
 		var planet
@@ -35,7 +38,7 @@ func _unhandled_input(event):
 
 func line_for_planet(planet):
 	if planet.building == planet.building_type.NONE:
-		return '   [R] build resource extractor   [S] build shipyard'
+		return '   [R] build resource extractor   [S] build cargo shipyard   [D] build defense shipyard'
 	else:
 		return ''
 

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/ship.svg-b5ef03cb39b509d8bae0e1546d07cd6a.stex"
+path="res://.import/cargo_ship.svg-465120f4a2eebcec2fd459067d27fce7.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ship.svg"
-dest_files=[ "res://.import/ship.svg-b5ef03cb39b509d8bae0e1546d07cd6a.stex" ]
+source_file="res://ships/cargo_ship.svg"
+dest_files=[ "res://.import/cargo_ship.svg-465120f4a2eebcec2fd459067d27fce7.stex" ]
 
 [params]
 
@@ -28,6 +28,7 @@ process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false
 process/invert_color=false
+process/normal_map_invert_y=false
 stream=false
 size_limit=0
 detect_3d=true

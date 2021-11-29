@@ -25,11 +25,12 @@ func _ready():
 
 		emit_signal('planets_updated')
 
-		yield(get_tree().create_timer(1.5), 'timeout')
+		# use for debugging planet generation 
+		# yield(get_tree().create_timer(1.5), 'timeout')
 
 func get_new_planet_position(last_position: Vector2):
 	var position = Vector2(1, 0).rotated(randf() * TAU)\
-		* Ships.Ship.get_max_distance_from_home()\
+		* CargoShips.CargoShip.get_max_distance_from_home()\
 		+ last_position
 
 	var near_planets = []

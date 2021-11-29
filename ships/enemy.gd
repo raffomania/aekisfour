@@ -59,7 +59,7 @@ class EnemyShip:
 	var laser = null
 	var health = 2
 	const max_speed = 80
-	const steering = 1.1
+	const steering = 1.3
 	const acceleration = 0.08
 	const cooldown = 2
 
@@ -71,6 +71,8 @@ class EnemyShip:
 		time_since_shot += dt
 		if is_instance_valid(target):
 			var to_target = target.global_position - transform.origin
+
+			# shoot the target
 			if to_target.length_squared() < 2000 and time_since_shot > cooldown:
 				process_target()
 			else:

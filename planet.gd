@@ -57,14 +57,21 @@ func set_building(type):
 	building = type
 	update()
 
+	if type != building_type.NONE:
+		# reset health in case this building was destroyed before
+		health = 5
+
 	if type == building_type.RESOURCE:
+		# Produce resources periodically
 		resource_timer = Timer.new()
 		resource_timer.wait_time = 5
 		resource_timer.connect('timeout', self, 'tick_resources')
 		add_child(resource_timer)
 		resource_timer.start()
 	elif type == building_type.NONE:
+		# Destroy this building, remove resources
 		resources = 0
+		# stop producing
 		if is_instance_valid(resource_timer):
 			resource_timer.queue_free()
 

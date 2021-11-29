@@ -7,7 +7,7 @@ var ships: Array = []
 func _ready():
 	yield($'../planets', 'planets_updated')
 	var planet = get_tree().get_nodes_in_group('planets')[0]
-	for i in range(self.multimesh.instance_count):
+	for i in range(self.multimesh.visible_instance_count):
 		var ship = DefenseShip.new()
 		ship.init(planet.global_position)
 		ships.push_back(ship)
@@ -16,7 +16,7 @@ func _ready():
 
 func _process(dt):
 	var enemies = $'../enemy_ships'.ships
-	for i in range(self.multimesh.instance_count):
+	for i in range(self.multimesh.visible_instance_count):
 		var ship = ships[i]
 		if not is_instance_valid(ship.target):
 			ship.update_target(enemies)
@@ -30,12 +30,12 @@ func _draw():
 			draw_line(ship.transform.origin, ship.laser, Color.red, 3.0)
 
 func add_ship(position):
-	multimesh.instance_count += 1
+	multimesh.visible_instance_count += 1
 	var ship = DefenseShip.new()
 	ship.init(position)
 	ships.push_back(ship)
-	multimesh.set_instance_transform_2d(multimesh.instance_count, ship.transform)
-	multimesh.set_instance_color(multimesh.instance_count, Color.white)
+	multimesh.set_instance_transform_2d(multimesh.visible_instance_count, ship.transform)
+	multimesh.set_instance_color(multimesh.visible_instance_count, Color.white)
 
 class DefenseShip:
 	var transform: Transform2D
@@ -47,8 +47,8 @@ class DefenseShip:
 	var laser = null
 	const capacity = 2
 	const max_speed = 80
-	const steering = 1.75
-	const acceleration = 0.1
+	const steering = 1.1
+	const acceleration = 5
 	const random_wander_strength = 2
 	const cooldown = 2
 
@@ -59,6 +59,11 @@ class DefenseShip:
 	func update(dt):
 		var direction: Vector2 = velocity.normalized()
 		time_since_shot += dt
+
+		# if the target was killed by another ship, look for a new one
+		if target != null and target.health <= 0:
+			target = null
+
 		if target != null:
 			var to_target = target.transform.origin - transform.origin
 
@@ -82,7 +87,10 @@ class DefenseShip:
 			laser = null
 		
 		velocity = velocity.normalized().slerp(direction, steering * dt) \
-			* lerp(velocity.length(), max_speed, acceleration * dt)
+			* velocity.length() \
+			+ (velocity.normalized() * acceleration * dt)
+		
+		velocity = velocity.clamped(max_speed)
 
 		var new_transform = Transform2D().rotated(velocity.angle())
 		new_transform.origin = transform.origin + dt * velocity

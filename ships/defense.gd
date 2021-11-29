@@ -48,7 +48,7 @@ class DefenseShip:
 	const capacity = 2
 	const max_speed = 80
 	const steering = 1.5
-	const acceleration = 5
+	const acceleration = 20
 	const random_wander_strength = 2
 	const cooldown = 2
 

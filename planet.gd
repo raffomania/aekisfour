@@ -73,6 +73,7 @@ func set_building(type):
 		# stop producing in case this was a resource building before
 		if is_instance_valid(resource_timer):
 			resource_timer.queue_free()
+		reserved_resources = 0
 
 	if self.is_sink():
 		# try to produce something with existing resources

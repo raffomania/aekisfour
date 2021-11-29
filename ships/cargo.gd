@@ -48,7 +48,7 @@ class CargoShip:
 	const capacity = 2
 	const max_speed = 80
 	const steering = 1.45
-	const acceleration = 3
+	const acceleration = 6
 	const separation = 0.03
 	const random_wander_strength = 2
 
@@ -58,6 +58,11 @@ class CargoShip:
 
 	func update(dt, ships):
 		var direction: Vector2 = velocity.normalized()
+
+		# If target was destroyed, look for a new one
+		if is_instance_valid(target) and target.building == Planet.building_type.NONE:
+			target = null
+
 		if is_instance_valid(target):
 			var to_target = target.global_position - transform.origin
 			if to_target.length_squared() < 2000:
@@ -106,16 +111,30 @@ class CargoShip:
 		target = null
 
 	func update_target(planets):
-		var resource_sinks = [Planet.building_type.SHIPYARD, Planet.building_type.DEFENSE]
+		var nearest = null
+		var distance_to_nearest = null
 		for planet in planets:
-			if planet.building in resource_sinks and resources > 0:
-				target = planet
-				return
-			elif planet.building == planet.building_type.RESOURCE and resources == 0 and planet.reserved_resources < planet.resources:
-				target = planet
-				planet.reserved_resources += capacity - resources
-				reserved_resources = capacity - resources
-				return
+			var distance = planet.global_position.distance_to(transform.origin)
+
+			if (planet.is_sink() and resources > 0 and 
+					(nearest == null or distance < distance_to_nearest)):
+				nearest = planet
+				distance_to_nearest = distance
+
+			elif (planet.building == planet.building_type.RESOURCE and 
+					resources == 0 and 
+					planet.reserved_resources < planet.resources and
+					(nearest == null or distance < distance_to_nearest)):
+				nearest = planet
+				distance_to_nearest = distance
+
+		target = nearest
+
+		if (target != null and 
+				target.building == Planet.building_type.RESOURCE):
+			target.reserved_resources += capacity - resources
+			reserved_resources = capacity - resources
+
 	
 	static func get_max_distance_from_home():
 		return 200

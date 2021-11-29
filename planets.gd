@@ -1,7 +1,7 @@
 extends Node
 
 var planet_res = preload('res://planet.tscn')
-var characters = [KEY_H, KEY_J, KEY_K, KEY_L, KEY_Y, KEY_U, KEY_I, KEY_O]
+var characters = [KEY_H, KEY_J, KEY_K, KEY_L, KEY_Y, KEY_U, KEY_I, KEY_O, KEY_P, KEY_N, KEY_M]
 var all_planets = []
 var discovered_planets = []
 signal planets_updated

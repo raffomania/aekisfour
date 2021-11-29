@@ -5,26 +5,17 @@ func _ready():
 
 func update():
 	var planets = get_tree().get_nodes_in_group('planets')
-	if len(planets) == 0:
+	if len(planets) <= 1:
 		return
 
 	var extents = Rect2()
-	extents.position = planets[0].position
+	extents.position = planets[0].global_position
 	for planet in planets:
-		extents = extents.expand(planet.position)
+		extents = extents.expand(planet.global_position)
 	
-	var padding = Vector2(200, 200)
-	extents.position -= (extents.size + padding) / 2
-	extents.size += extents.size + padding
-
-	var smaller_than_min = Vector2(500, 500) - extents.size
-	if smaller_than_min.x > 0:
-		extents.size.x += smaller_than_min.x
-		extents.position.x -= smaller_than_min.x / 2
-
-	if smaller_than_min.y > 0:
-		extents.size.y += smaller_than_min.y
-		extents.position.y -= smaller_than_min.y / 2
+	var padding = Vector2(400, 400)
+	extents.position -= padding / 2
+	extents.size += padding
 
 	var screen_size = Vector2(1920, 1080)
 	var scale = min(screen_size.x / extents.size.x, screen_size.y / extents.size.y)

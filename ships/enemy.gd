@@ -10,7 +10,7 @@ var enemies_to_spawn = 1
 func _ready():
 	yield($'../planets', 'planets_updated')
 	var timer = Timer.new()
-	timer.wait_time = 5
+	timer.wait_time = 20
 	timer.connect('timeout', self, 'spawn_wave')
 	add_child(timer)
 	timer.start()

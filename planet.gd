@@ -61,19 +61,22 @@ func set_building(type):
 		# reset health in case this building was destroyed before
 		health = 5
 
-	if type == building_type.RESOURCE:
+	if type == building_type.RESOURCE and not is_instance_valid(resource_timer):
 		# Produce resources periodically
 		resource_timer = Timer.new()
 		resource_timer.wait_time = 5
 		resource_timer.connect('timeout', self, 'tick_resources')
 		add_child(resource_timer)
 		resource_timer.start()
-	elif type == building_type.NONE:
-		# Destroy this building, remove resources
-		resources = 0
-		# stop producing
+
+	if type != building_type.RESOURCE:
+		# stop producing in case this was a resource building before
 		if is_instance_valid(resource_timer):
 			resource_timer.queue_free()
+
+	if self.is_sink():
+		# try to produce something with existing resources
+		try_spawn_ship()
 
 
 func set_selected(value):
@@ -98,3 +101,4 @@ func set_health(new_health):
 	if health <= 0:
 		# use `self.` to trigger setter method
 		self.building = building_type.NONE
+		resources = 0

@@ -48,7 +48,7 @@ class CargoShip:
 	const capacity = 2
 	const max_speed = 80
 	const steering = 1.45
-	const acceleration = 0.1
+	const acceleration = 3
 	const separation = 0.03
 	const random_wander_strength = 2
 
@@ -58,14 +58,12 @@ class CargoShip:
 
 	func update(dt, ships):
 		var direction: Vector2 = velocity.normalized()
-		var deceleration = 0
 		if is_instance_valid(target):
 			var to_target = target.global_position - transform.origin
 			if to_target.length_squared() < 2000:
 				process_target()
 			else:
 				direction = to_target.normalized()
-				deceleration = clamp((400 - to_target.length())/400, 0, 1) * acceleration
 		else:
 			random_direction = random_direction.rotated((randf() - 0.5) * TAU * dt * random_wander_strength)
 
@@ -85,8 +83,10 @@ class CargoShip:
 				direction = direction.slerp(from_other_to_self.normalized(), separation)
 
 		velocity = velocity.normalized().slerp(direction, steering * dt) \
-			* lerp(velocity.length(), max_speed, (acceleration - deceleration) * dt) \
-			* (1 - deceleration * dt)
+			* velocity.length() \
+			+ (velocity.normalized() * acceleration * dt)
+		
+		velocity = velocity.clamped(max_speed)
 
 		var new_transform = Transform2D().rotated(velocity.angle())
 		new_transform.origin = transform.origin + dt * velocity

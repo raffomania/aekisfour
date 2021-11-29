@@ -27,7 +27,7 @@ func _process(dt):
 func _draw():
 	for ship in ships:
 		if ship.laser != null:
-			draw_line(ship.transform.origin, ship.laser, Color.red, 3.0)
+			draw_line(ship.transform.origin, ship.laser, Color.white, 3.0)
 
 func add_ship(position):
 	var ship = DefenseShip.new()
@@ -47,7 +47,7 @@ class DefenseShip:
 	var laser = null
 	const capacity = 2
 	const max_speed = 80
-	const steering = 1.1
+	const steering = 1.5
 	const acceleration = 5
 	const random_wander_strength = 2
 	const cooldown = 2
@@ -58,6 +58,7 @@ class DefenseShip:
 
 	func update(dt):
 		var direction: Vector2 = velocity.normalized()
+		var actual_acceleration = acceleration
 		time_since_shot += dt
 
 		# if the target was killed by another ship, look for a new one
@@ -66,12 +67,14 @@ class DefenseShip:
 
 		if target != null:
 			var to_target = target.transform.origin - transform.origin
+			direction = to_target.normalized()
+
+			if to_target.length_squared() < 6000:
+				actual_acceleration = -0.1 * dt
 
 			# shoot the target
 			if to_target.length_squared() < 2000 and time_since_shot > cooldown:
 				process_target()
-			else:
-				direction = to_target.normalized()
 		else:
 			random_direction = random_direction.rotated((randf() - 0.5) * TAU * dt * random_wander_strength)
 
@@ -85,10 +88,11 @@ class DefenseShip:
 		# remove laser beam after a little while
 		if laser != null and time_since_shot > 0.2:
 			laser = null
+
 		
 		velocity = velocity.normalized().slerp(direction, steering * dt) \
 			* velocity.length() \
-			+ (velocity.normalized() * acceleration * dt)
+			+ (velocity.normalized() * actual_acceleration * dt)
 		
 		velocity = velocity.clamped(max_speed)
 
@@ -101,13 +105,18 @@ class DefenseShip:
 		time_since_shot = 0
 		laser = target.transform.origin
 		if target.health <= 0:
-			last_target = target.transform.origin
 			target = null
 
 	func update_target(enemies):
+		var nearest = null
+		var distance_to_nearest = null
 		for enemy in enemies:
-			target = enemy
-			return
+			var distance = enemy.transform.origin.distance_to(transform.origin)
+			if (distance < 500 and 
+					(nearest == null or distance < distance_to_nearest)):
+				nearest = enemy
+				distance_to_nearest = nearest.transform.origin.distance_to(transform.origin)
+		target = nearest
 	
 	static func get_max_distance_from_home():
 		return 200

@@ -10,7 +10,7 @@ var enemies_to_spawn = 1
 func _ready():
 	yield($'../planets', 'planets_updated')
 	var timer = Timer.new()
-	timer.wait_time = 30
+	timer.wait_time = 5
 	timer.connect('timeout', self, 'spawn_wave')
 	add_child(timer)
 	timer.start()
@@ -48,11 +48,15 @@ func add_ship(position):
 	ship.init(position)
 	ships.push_back(ship)
 	multimesh.set_instance_transform_2d(multimesh.visible_instance_count - 1, ship.transform)
-	multimesh.set_instance_color(multimesh.visible_instance_count - 1, Color.red)
 
 func spawn_wave():
+	# if spawning this wave would exceed the multimesh bounds, enlarge them
+	if multimesh.instance_count < multimesh.visible_instance_count + enemies_to_spawn:
+		multimesh.instance_count += enemies_to_spawn
+
 	for _i in range(enemies_to_spawn):
-		add_ship(Vector2(-1920/2, -1080/2))
+		var left_or_right = [-1920/2, 1920/2][(randi() % 2)]
+		add_ship(Vector2(left_or_right, rand_range(-1080/2, 1080/2)))
 	enemies_to_spawn += 2
 
 class EnemyShip:
@@ -62,9 +66,9 @@ class EnemyShip:
 	var time_since_shot = 0
 	var laser = null
 	var health = 2
-	const max_speed = 80
-	const steering = 1.3
-	const acceleration = 0.08
+	const max_speed = 60
+	const steering = 1.5
+	const acceleration = 3
 	const cooldown = 2
 
 	func init(position: Vector2):
@@ -73,6 +77,11 @@ class EnemyShip:
 	func update(dt):
 		var direction: Vector2 = velocity.normalized()
 		time_since_shot += dt
+
+		# if the target was killed by another ship, look for a new one
+		if is_instance_valid(target) and target.health <= 0:
+			target = null
+
 		if is_instance_valid(target):
 			var to_target = target.global_position - transform.origin
 
@@ -87,7 +96,10 @@ class EnemyShip:
 			laser = null
 
 		velocity = velocity.normalized().slerp(direction, steering * dt) \
-			* lerp(velocity.length(), max_speed, acceleration * dt)
+			* velocity.length() \
+			+ (velocity.normalized() * acceleration * dt)
+		
+		velocity = velocity.clamped(max_speed)
 
 		var new_transform = Transform2D().rotated(velocity.angle())
 		new_transform.origin = transform.origin + dt * velocity

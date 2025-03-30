@@ -1,7 +1,7 @@
 extends Node2D
 
 func _ready():
-	var _e = $'../planets'.connect('planets_updated', self, 'update')
+	var _e = $'../planets'.connect('planets_updated', self.update)
 
 func update():
 	var planets = get_tree().get_nodes_in_group('planets')
@@ -18,14 +18,14 @@ func update():
 	extents.size += padding
 
 	var screen_size = Vector2(1920, 1080)
-	var scale = min(screen_size.x / extents.size.x, screen_size.y / extents.size.y)
+	var new_scale = min(screen_size.x / extents.size.x, screen_size.y / extents.size.y)
 
 	var offset = extents.position
-	var margin = (screen_size - extents.size * scale) / 2
-	offset -= margin / scale
+	var margin = (screen_size - extents.size * new_scale) / 2
+	offset -= margin / new_scale
 
-	var transform = Transform2D()
-	transform.origin = -offset
-	transform = transform.scaled(Vector2(scale, scale))
+	var new_transform = Transform2D()
+	new_transform.origin = - offset
+	new_transform = new_transform.scaled(Vector2(new_scale, new_scale))
 
-	get_viewport().canvas_transform = transform
+	get_viewport().canvas_transform = new_transform

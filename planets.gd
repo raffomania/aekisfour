@@ -7,11 +7,11 @@ var discovered_planets = []
 signal planets_updated
 
 func _ready():
-	yield(get_tree().root, 'ready')
+	await get_tree().root.ready
 	randomize()
 	var last_planet_pos = Vector2(0, 0)
 	for character in characters:
-		var planet = planet_res.instance()
+		var planet = planet_res.instantiate()
 		planet.character = character
 		
 		planet.global_position = get_new_planet_position(last_planet_pos)

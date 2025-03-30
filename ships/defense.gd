@@ -5,14 +5,13 @@ class_name DefenseShips
 var ships: Array = []
 
 func _ready():
-	yield($'../planets', 'planets_updated')
+	await $'../planets'.planets_updated
 	var planet = get_tree().get_nodes_in_group('planets')[0]
 	for i in range(self.multimesh.visible_instance_count):
 		var ship = DefenseShip.new()
 		ship.init(planet.global_position)
 		ships.push_back(ship)
 		multimesh.set_instance_transform_2d(i, ships[i].transform)
-		multimesh.set_instance_color(i, Color.white)
 
 func _process(dt):
 	var enemies = $'../enemy_ships'.ships
@@ -22,19 +21,18 @@ func _process(dt):
 			ship.update_target(enemies)
 		ship.update(dt)
 		multimesh.set_instance_transform_2d(i, ship.transform)
-	update()
+	queue_redraw()
 
 func _draw():
 	for ship in ships:
 		if ship.laser != null:
-			draw_line(ship.transform.origin, ship.laser, Color.white, 3.0)
+			draw_line(ship.transform.origin, ship.laser, Color.WHITE, 3.0)
 
-func add_ship(position):
+func add_ship(new_position):
 	var ship = DefenseShip.new()
-	ship.init(position)
+	ship.init(new_position)
 	ships.push_back(ship)
 	multimesh.set_instance_transform_2d(multimesh.visible_instance_count, ship.transform)
-	multimesh.set_instance_color(multimesh.visible_instance_count, Color.white)
 	multimesh.visible_instance_count += 1
 
 class DefenseShip:
@@ -94,7 +92,7 @@ class DefenseShip:
 			* velocity.length() \
 			+ (velocity.normalized() * actual_acceleration * dt)
 		
-		velocity = velocity.clamped(max_speed)
+		velocity = velocity.limit_length(max_speed)
 
 		var new_transform = Transform2D().rotated(velocity.angle())
 		new_transform.origin = transform.origin + dt * velocity
@@ -112,7 +110,7 @@ class DefenseShip:
 		var distance_to_nearest = null
 		for enemy in enemies:
 			var distance = enemy.transform.origin.distance_to(transform.origin)
-			if (distance < 500 and 
+			if (distance < 500 and
 					(nearest == null or distance < distance_to_nearest)):
 				nearest = enemy
 				distance_to_nearest = nearest.transform.origin.distance_to(transform.origin)

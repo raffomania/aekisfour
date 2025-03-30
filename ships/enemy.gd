@@ -1,4 +1,3 @@
-
 extends MultiMeshInstance2D
 
 class_name EnemyShips
@@ -8,10 +7,10 @@ var lasers: Array = []
 var enemies_to_spawn = 1
 
 func _ready():
-	yield($'../planets', 'planets_updated')
+	await $'../planets'.planets_updated
 	var timer = Timer.new()
 	timer.wait_time = 20
-	timer.connect('timeout', self, 'spawn_wave')
+	timer.connect('timeout', Callable(self, 'spawn_wave'))
 	add_child(timer)
 	timer.start()
 
@@ -31,21 +30,21 @@ func _process(dt):
 		ship.update(dt)
 		multimesh.set_instance_transform_2d(i, ship.transform)
 
-	update()
+	queue_redraw()
 
 func _draw():
 	for ship in ships:
 		if ship.laser != null:
-			draw_line(ship.transform.origin, ship.laser, Color.red, 3.0)
+			draw_line(ship.transform.origin, ship.laser, Color.RED, 3.0)
 
 func remove_ship(ship):
 	multimesh.visible_instance_count -= 1
 	ships.erase(ship)
 
-func add_ship(position):
+func add_ship(new_position):
 	multimesh.visible_instance_count += 1
 	var ship = EnemyShip.new()
-	ship.init(position)
+	ship.init(new_position)
 	ships.push_back(ship)
 	multimesh.set_instance_transform_2d(multimesh.visible_instance_count - 1, ship.transform)
 
@@ -55,8 +54,8 @@ func spawn_wave():
 		multimesh.instance_count += enemies_to_spawn
 
 	for _i in range(enemies_to_spawn):
-		var left_or_right = [-1920/2, 1920/2][(randi() % 2)]
-		add_ship(Vector2(left_or_right, rand_range(-1080/2, 1080/2)))
+		var left_or_right = [-1920 / 2, 1920 / 2][(randi() % 2)]
+		add_ship(Vector2(left_or_right, randf_range(-1080 / 2, 1080 / 2)))
 	enemies_to_spawn += 2
 
 class EnemyShip:
@@ -99,7 +98,7 @@ class EnemyShip:
 			* velocity.length() \
 			+ (velocity.normalized() * acceleration * dt)
 		
-		velocity = velocity.clamped(max_speed)
+		velocity = velocity.limit_length(max_speed)
 
 		var new_transform = Transform2D().rotated(velocity.angle())
 		new_transform.origin = transform.origin + dt * velocity

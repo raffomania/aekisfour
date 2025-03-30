@@ -5,14 +5,13 @@ class_name CargoShips
 var ships: Array = []
 
 func _ready():
-	yield($'../planets', 'planets_updated')
+	await $'../planets'.planets_updated
 	var planet = get_tree().get_nodes_in_group('planets')[0]
 	for i in range(self.multimesh.instance_count):
 		var ship = CargoShip.new()
 		ship.init(planet.global_position)
 		ships.push_back(ship)
 		multimesh.set_instance_transform_2d(i, ships[i].transform)
-		multimesh.set_instance_color(i, Color.white)
 
 func _process(dt):
 	var planets = get_tree().get_nodes_in_group('planets')
@@ -22,20 +21,19 @@ func _process(dt):
 			ship.update_target(planets)
 		ship.update(dt, ships)
 		multimesh.set_instance_transform_2d(i, ship.transform)
-	update()
+	queue_redraw()
 
 func _draw():
 	for ship in ships:
 		for i in range(ship.resources):
-			draw_circle(ship.transform.translated(Vector2(-10 + i * -5, 0)).origin, 2, Color.white)
+			draw_circle(ship.transform.translated(Vector2(-10 + i * -5, 0)).origin, 2, Color.WHITE)
 
-func add_ship(position):
+func add_ship(new_position):
 	var ship = CargoShip.new()
-	ship.init(position)
+	ship.init(new_position)
 	ships.push_back(ship)
 	multimesh.instance_count += 1
 	multimesh.set_instance_transform_2d(multimesh.instance_count - 1, ship.transform)
-	multimesh.set_instance_color(multimesh.instance_count - 1, Color.white)
 
 class CargoShip:
 	var transform: Transform2D
@@ -91,7 +89,7 @@ class CargoShip:
 			* velocity.length() \
 			+ (velocity.normalized() * acceleration * dt)
 		
-		velocity = velocity.clamped(max_speed)
+		velocity = velocity.limit_length(max_speed)
 
 		var new_transform = Transform2D().rotated(velocity.angle())
 		new_transform.origin = transform.origin + dt * velocity
@@ -116,13 +114,13 @@ class CargoShip:
 		for planet in planets:
 			var distance = planet.global_position.distance_to(transform.origin)
 
-			if (planet.is_sink() and resources > 0 and 
+			if (planet.is_sink() and resources > 0 and
 					(nearest == null or distance < distance_to_nearest)):
 				nearest = planet
 				distance_to_nearest = distance
 
-			elif (planet.building == planet.building_type.RESOURCE and 
-					resources == 0 and 
+			elif (planet.building == planet.building_type.RESOURCE and
+					resources == 0 and
 					planet.reserved_resources < planet.resources and
 					(nearest == null or distance < distance_to_nearest)):
 				nearest = planet
@@ -130,7 +128,7 @@ class CargoShip:
 
 		target = nearest
 
-		if (target != null and 
+		if (target != null and
 				target.building == Planet.building_type.RESOURCE):
 			target.reserved_resources += capacity - resources
 			reserved_resources = capacity - resources
